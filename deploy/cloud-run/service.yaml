@@ -1,0 +1,39 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: coop-kobe-ui
+  annotations:
+    run.googleapis.com/description: "Streamlit UI for Databricks-backed product revenue and sales data"
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/minScale: "0"
+        autoscaling.knative.dev/maxScale: "2"
+    spec:
+      containerConcurrency: 10
+      timeoutSeconds: 300
+      containers:
+        - image: REGION-docker.pkg.dev/PROJECT_ID/REPOSITORY/coop-kobe:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: STREAMLIT_SERVER_HEADLESS
+              value: "true"
+            - name: DATABRICKS_SQL_POLL_SECONDS
+              value: "1"
+            - name: DATABRICKS_SQL_TIMEOUT_SECONDS
+              value: "60"
+            - name: DATABRICKS_SQL_WAIT_TIMEOUT
+              value: "10s"
+          resources:
+            limits:
+              cpu: "1"
+              memory: "512Mi"
+          startupProbe:
+            httpGet:
+              path: /_stcore/health
+              port: 8080
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 12

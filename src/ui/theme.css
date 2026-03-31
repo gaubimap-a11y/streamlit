@@ -1,0 +1,170 @@
+:root {
+    --panel-bg: rgba(127, 127, 127, 0.08);
+    --panel-border: rgba(127, 127, 127, 0.18);
+    --text-main: inherit;
+    --text-muted: inherit;
+    --success-soft: rgba(46, 160, 67, 0.14);
+    --warning-soft: rgba(210, 153, 34, 0.18);
+    --sidebar-bg: rgba(127, 127, 127, 0.08);
+    --sidebar-text: inherit;
+    --sidebar-input-bg: rgba(127, 127, 127, 0.14);
+    --sidebar-input-text: inherit;
+    --sidebar-input-placeholder: rgba(127, 127, 127, 0.9);
+    --radius: 18px;
+    --shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+}
+
+.stApp {
+    background: transparent;
+}
+
+[data-testid="stSidebar"] {
+    background: var(--sidebar-bg);
+    border-right: 1px solid var(--panel-border);
+    backdrop-filter: blur(10px);
+}
+
+[data-testid="stSidebar"] * {
+    color: var(--sidebar-text);
+}
+
+[data-testid="stSidebar"] [data-testid="stTextInput"] input {
+    background: var(--sidebar-input-bg);
+    color: var(--sidebar-input-text);
+}
+
+[data-testid="stSidebar"] [data-testid="stTextInput"] input::placeholder {
+    color: var(--sidebar-input-placeholder);
+}
+
+[data-testid="stSidebar"] [data-testid="stTextInput"] label,
+[data-testid="stSidebar"] [data-testid="stMarkdown"],
+[data-testid="stSidebar"] [data-testid="stCaptionContainer"] {
+    color: var(--sidebar-text);
+}
+
+[data-testid="stSidebar"] [data-testid="stTextInput"] input,
+[data-testid="stSidebar"] button {
+    border-color: var(--panel-border);
+}
+
+.block-container {
+    padding-top: 1.2rem;
+    padding-bottom: 2rem;
+}
+
+.app-breadcrumb {
+    color: var(--text-muted);
+    opacity: 0.72;
+    font-size: 0.9rem;
+    margin-bottom: 0.35rem;
+}
+
+.app-breadcrumb strong {
+    color: var(--text-main);
+    opacity: 1;
+}
+
+.app-header {
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-border);
+    border-radius: 22px;
+    box-shadow: var(--shadow);
+    padding: 1.15rem 1.2rem;
+    backdrop-filter: blur(8px);
+    margin-bottom: 1rem;
+}
+
+.app-header-grid {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+
+.app-title {
+    font-size: 2rem;
+    line-height: 1.15;
+    font-weight: 700;
+    color: var(--text-main);
+    margin: 0;
+}
+
+.app-subtitle {
+    margin-top: 0.35rem;
+    color: var(--text-muted);
+    opacity: 0.78;
+    font-size: 0.98rem;
+}
+
+.app-status-wrap {
+    display: flex;
+    gap: 0.65rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.app-chip {
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-border);
+    border-radius: 999px;
+    padding: 0.5rem 0.85rem;
+    font-size: 0.88rem;
+    color: var(--text-main);
+    box-shadow: var(--shadow);
+}
+
+.app-chip.status-loading {
+    background: var(--warning-soft);
+}
+
+.app-chip.status-ready {
+    background: var(--success-soft);
+}
+
+.helper-text {
+    color: var(--text-muted);
+    opacity: 0.75;
+    font-size: 0.9rem;
+    padding-top: 0.4rem;
+}
+
+div[data-testid="stVerticalBlock"] div[data-testid="stContainer"] {
+    border-radius: var(--radius);
+}
+
+div[data-baseweb="tab-list"] {
+    gap: 0.35rem;
+}
+
+button[data-baseweb="tab"] {
+    border-radius: 999px;
+}
+
+div[data-testid="stMetric"] {
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-border);
+    border-radius: var(--radius);
+    padding: 0.9rem 1rem;
+}
+
+div[data-testid="stMetricLabel"],
+div[data-testid="stMetricValue"] {
+    color: inherit;
+}
+
+div[data-testid="stAlert"] {
+    border-radius: var(--radius);
+}
+
+div[data-testid="stDataFrame"] {
+    border-radius: var(--radius);
+    overflow: hidden;
+}
+
+@media (max-width: 900px) {
+    .app-title {
+        font-size: 1.6rem;
+    }
+}
