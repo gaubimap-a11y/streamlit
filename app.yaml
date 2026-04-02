@@ -1,8 +1,6 @@
 command: ['streamlit', 'run', 'app.py']
 
 env:
-  - name: "DATABRICKS_HOST"
-    value: "dbc-42ab559d-0aee.cloud.databricks.com"
   - name: "DATABRICKS_WAREHOUSE_ID"
     valueFrom: "sql-warehouse"
   - name: "STREAMLIT_GATHER_USAGE_STATS"
