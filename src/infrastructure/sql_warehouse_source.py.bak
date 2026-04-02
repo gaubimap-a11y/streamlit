@@ -12,13 +12,6 @@ from urllib import request as urllib_request
 import pandas as pd
 import streamlit as st
 
-# Import Databricks SDK for automatic authentication
-try:
-    from databricks.sdk.core import Config as DatabricksSDKConfig
-    _HAS_DATABRICKS_SDK = True
-except ImportError:
-    _HAS_DATABRICKS_SDK = False
-
 
 def _load_env_from_file() -> None:
     env_path = Path.cwd() / ".env"
@@ -76,64 +69,9 @@ def _read_secret(name: str) -> str:
 
     return str(secret_value).strip()
 
-def _get_databricks_token_from_sdk() -> str:
-    """
-    Get token from Databricks SDK Config when running in Databricks Apps.
-    
-    This is a fallback for when DATABRICKS_TOKEN is not set in environment variables.
-    On Databricks Apps, the SDK automatically uses the app's service principal credentials.
-    On local development, this will fail gracefully and return empty string,
-    so the code will fall back to requiring DATABRICKS_TOKEN in .env file.
-    """
-    if not _HAS_DATABRICKS_SDK:
-        return ""
-    
-    try:
-        cfg = DatabricksSDKConfig()
-        
-        # The SDK will automatically authenticate using available credentials:
-        # - On Databricks Apps: uses app service principal
-        # - On local: uses ~/.databrickscfg or env vars if available
-        
-        # Try to get the token directly from the config
-        if hasattr(cfg, 'token') and cfg.token:
-            return cfg.token
-        
-        # Alternative: try to get auth header
-        if hasattr(cfg, 'authenticate') and callable(cfg.authenticate):
-            auth_result = cfg.authenticate()
-            if isinstance(auth_result, dict) and 'Authorization' in auth_result:
-                token = auth_result['Authorization']
-                # Remove 'Bearer ' prefix if present
-                if token.startswith('Bearer '):
-                    return token[7:]
-                return token
-    except Exception:
-        # Fail silently - this is expected on local dev without proper SDK config
-        pass
-    
-    return ""
-
-
 
 def _read_config_value(name: str) -> str:
-    # Try secrets first
-    value = _read_secret(name)
-    if value:
-        return value
-    
-    # Try environment variables
-    value = _read_env(name)
-    if value:
-        return value
-    
-    # For DATABRICKS_TOKEN, try to get from SDK Config
-    if name == "DATABRICKS_TOKEN":
-        value = _get_databricks_token_from_sdk()
-        if value:
-            return value
-    
-    return ""
+    return _read_secret(name) or _read_env(name)
 
 
 def _load_default_dataset_config() -> dict[str, Any]:
