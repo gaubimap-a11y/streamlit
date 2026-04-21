@@ -1,7 +1,7 @@
 # =========================
 # Databricks config (secret)
 # =========================
-webapp/databricks.local.cfg
+databricks.local.cfg
 
 # =========================
 # Python cache
@@ -21,3 +21,4 @@ __pycache__/
 venv/
 env/
 ENV/
+.env
