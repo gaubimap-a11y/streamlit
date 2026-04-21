@@ -1,0 +1,111 @@
+{
+  "ui": {
+    "header": {
+      "system_name": "データ分析システム",
+      "brand": "コープこうべ",
+      "logout": "ログアウト"
+    },
+    "sidebar": {
+      "dashboard": "ダッシュボード",
+      "back_to_dashboard": "ダッシュボードに戻る",
+      "dark_mode": "ダークモード",
+      "language": "言語",
+      "admin_panel": "管理パネル",
+      "users": "ユーザー",
+      "summary_report": "集計レポート",
+      "supply_report": "供給レポート",
+      "menu_admin": "メニュー管理",
+      "connection_config": "接続設定",
+      "info_card": "Databricks SQL Warehouseからデータを取得するための条件を入力してください。",
+      "department_label": "部門を選択",
+      "date_range_label": "データ期間",
+      "state_connected": "状態：接続済み",
+      "engine_label": "エンジン：Databricks SQL"
+    },
+    "dashboard": {
+      "search_title": "商品検索",
+      "search_results": "検索結果",
+      "chart_title": "カテゴリー別在庫チャート",
+      "empty_data": "該当する製品は見つかりませんでした。",
+      "export_btn": "データをエクスポート",
+      "filters": {
+          "product_name": "商品名",
+          "category": "カテゴリー",
+          "price_min": "最小価格",
+          "price_max": "最大価格"
+      },
+      "metrics": {
+          "db_connected": "データベース",
+          "avg_latency": "平均レイテンシ",
+          "data_freshness": "鮮度",
+          "active": "アクティブ",
+          "realtime": "リアルタイム"
+      },
+      "table": {
+          "product_name": "商品名",
+          "category": "種別",
+          "price": "価格",
+          "unit": "単位",
+          "description": "説明",
+          "stock_quantity": "在庫数"
+      }
+    },
+    "admin": {
+      "title": "セキュリティ管理",
+      "banner_title": "セキュリティベンチ",
+      "banner_subtitle": "ユーザー、ロール、権限の管理",
+      "banner_body": "リストから項目を選択し、詳細を確認してから保存してください。",
+      "tabs": {
+        "users": "ユーザー",
+        "roles": "ロール",
+        "permissions": "権限",
+        "audit": "監査ログ"
+      },
+      "users": {
+        "search_label": "ユーザーを検索",
+        "status_label": "ステータス",
+        "auth_source": "認証ソース",
+        "save_success": "ユーザーを保存しました。"
+      },
+      "roles": {
+        "search_label": "ロールを検索",
+        "save_success": "ロールを保存しました。"
+      },
+      "common": {
+          "active": "アクティブ",
+          "inactive": "非アクティブ",
+          "all": "すべて",
+          "save_btn": "保存",
+          "any": "すべて",
+          "prev_page": "<- 前のページ",
+          "next_page": "次のページ ->",
+          "page_info": "{current} / {total} ページ"
+      }
+    }
+  },
+  "auth": {
+    "title": "ログイン",
+    "subtitle": "システムを利用するためにログインしてください。",
+    "username": "ユーザー名",
+    "password": "パスワード",
+    "remember_me": "ログイン状態を保持する",
+    "login_btn": "ログイン",
+    "loading": "認証中...",
+    "google_btn": "Googleで続行",
+    "footer": "不明な点は管理者にお問い合わせください。",
+    "messages": {
+        "empty": "情報を入力してください。",
+        "wrong": "認証情報が正しくありません。",
+        "inactive": "アカウントが無効です。",
+        "lockout": "ロックされました。",
+        "success": "成功しました。"
+    }
+  },
+  "messages": {
+    "access_denied": "アクセス権限がありません。",
+    "fetch_error": "エラーが発生しました。",
+    "export_denied": "権限がありません。",
+    "filter_warning": "最小価格が不正です。",
+    "chart_library_error": "チャートライブラリを読み込めませんでした。"
+  }
+}

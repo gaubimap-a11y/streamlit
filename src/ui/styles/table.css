@@ -1,0 +1,53 @@
+.cols-table-head {
+    background: #f8f9fb;
+    border: 1px solid #d7dee8;
+    border-bottom: 2px solid #c7d0dc;
+    color: #0f172a;
+    font-size: 0.86rem;
+    font-weight: 700;
+    line-height: 1.2;
+    padding: 0.52rem 0.72rem;
+}
+
+.cols-table-cell {
+    color: #1f2937;
+    font-size: 0.86rem;
+    line-height: 1.28;
+    min-height: 2.2rem;
+}
+
+div[data-testid="stHorizontalBlock"]:has(div.cols-table-body) {
+    background: #ffffff;
+    border: 0.5px solid #e5e5e5;
+    margin-bottom: -16px;
+    transition: border-color .2s, box-shadow .2s;
+}
+
+div[data-testid="stHorizontalBlock"]:has(div.cols-table-body):hover {
+    background: #f8f9fb;
+}
+
+div[data-testid="stHorizontalBlock"]:has(div.cols-table-body)
+    button[kind="secondary"]:hover {
+    border-color: rgb(255, 75, 75);
+    box-shadow: 0 2px 8px rgba(127,119,221,0.08);
+}
+
+div[data-testid="stHorizontalBlock"]:has(div.cols-table-cell)
+    .stColumn {
+    border-right: 1px solid #e2e8f0;
+    padding: 6px;
+}
+
+div[data-testid="stHorizontalBlock"]:not(:has(div.cols-table-cell))
+    .stColumn {
+    border-right: none;
+}
+
+div[data-testid="stVerticalBlock"]:has(div.cols-table-body):not(:has(div.cols-table-cell)) {
+    gap: 0;
+}
+
+div[data-testid="stVerticalBlock"]:has(div.cols-table-cell) {
+    justify-content: center;
+}

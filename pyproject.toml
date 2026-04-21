@@ -1,0 +1,40 @@
+[project]
+name = "tmn-coop-kobe"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "BRYCN-Tran Huu Son",email = "son.tranhuu@tm-nets.com"}
+]
+readme = "README.md"
+requires-python = ">=3.14,<4.0"
+dependencies = [
+    "streamlit>=1.40.0",
+    "pydantic>=2.0.0",
+    "databricks-sql-connector>=3.0.0",
+    "streamlit-echarts>=0.4.0",
+    "werkzeug>=3.0.0",
+    "streamlit-tree-select>=0.0.5",
+    "streamlit-sortables>=0.1.0",
+    "streamlit-antd-components>=0.3.2",
+]
+
+[tool.poetry]
+packages = [{ include = "src" }]
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = ">=8.0.0"
+pytest-mock = ">=3.14.0"
+black = ">=24.0.0"
+ruff = ">=0.6.0"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+markers = [
+    "integration: marks tests as integration tests requiring real Databricks connection (deselect with '-m \"not integration\"')",
+]
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"

@@ -1,211 +1,76 @@
-# STREAMLIT DEMO UI
+# TMN COOP Kobe - Web Application
 
-Streamlit app for viewing Databricks-backed product revenue and sales data.
+Hệ thống quản lý tích hợp Databricks SQL và giao diện Streamlit.
 
-## Architecture
+## 🛠 Tech Stack
+-   **Frontend:** [Streamlit](https://streamlit.io/) (v1.40.0+)
+-   **Database:** [Databricks SQL](https://www.databricks.com/product/databricks-sql) (Delta Lake)
+-   **Connector:** `databricks-sql-connector`
+-   **Validation:** Pydantic v2
 
-This app supports two deployment modes:
+## 🚀 Cài đặt & Khởi chạy
 
-1. **Local Development** - Uses environment variables or Streamlit secrets for authentication
-2. **Databricks Apps** - Uses automatic service principal authentication
+### 1. Cấu hình kết nối
+Tạo file `webapp/databricks.local.cfg` (copy từ `databricks.cfg`) và điền thông tin:
+```ini
+[databricks]
+server_hostname = "..."
+http_path = "..."
+access_token = "..."
+```
 
-The authentication flow is designed to work seamlessly in both environments:
-- Local: Reads `DATABRICKS_TOKEN` from `.env` or `secrets.toml`
-- Databricks Apps: Automatically uses app service principal credentials via Databricks SDK
-
-## Run locally
-
-### 1. Install dependencies
-
+### 2. Cài đặt thư viện
+Dự án sử dụng [Poetry](https://python-poetry.org/) để quản lý môi trường:
 ```bash
-pip install -r requirements.txt
+cd webapp
+poetry install
 ```
 
-### 2. Configure secrets
-
-Copy the example file and fill in your values:
-
+Hoặc kích hoạt virtual environment:
 ```bash
-cp .env.example .env
+poetry shell
 ```
 
-Required values in `.env`:
-- `DATABRICKS_HOST` - Your workspace URL (e.g., `dbc-xxxxx.cloud.databricks.com`)
-- `DATABRICKS_TOKEN` - Your personal access token
-- `DATABRICKS_WAREHOUSE_ID` - SQL Warehouse ID to query
+### 3. Cấu trúc Database & Migration & Seed data
+Ứng dụng sử dụng migration files để quản lý schema của Databricks.
 
-**How to get these values:**
-- **Host**: Found in your workspace URL
-- **Token**: Workspace Settings → Developer → Access Tokens → Generate New Token
-- **Warehouse ID**: SQL Warehouses → Click your warehouse → Copy ID from URL or HTTP Path
+-   **Thư mục scripts:** `webapp/migrations/versions/`
+-   **Bảng lịch sử:** `tmn_kobe.config.migration_history`
+-   **Schema:** `config`, `master`, `transaction`, `auth`, `analytical`
+    - `config`: Cấu hình hệ thống.
+    - `master`: Dữ liệu master.
+    - `transaction`: Dữ liệu giao dịch, phát sinh theo thời gian thực.
+    - `auth`: Dữ liệu người dùng/phân quyền.
+    - `analytical`: Dữ liệu phân tích, tổng hợp.
+-   **Cách thêm migration mới:** 
+    Tạo file `.sql` mới trong thư mục `versions/` theo mẫu `YYYYMMDD_NNN_description.sql`.
+    - `YYYYMMDD`: Ngày tạo (Ví dụ: 20240410).
+    - `NNN`: Số thứ tự tịnh tiến trong ngày (001, 002...).
+    - `description`: Mô tả ngắn gọn nhiệm vụ bằng tiếng Anh, không dấu (VD: `initial_schema`).
 
-**Alternative:** You can also use `.streamlit/secrets.toml` instead of `.env`:
+Hệ thống tự động nạp dữ liệu mẫu (seeds) sau khi hoàn tất migration để phục vụ phát triển và kiểm thử.
 
-```toml
-DATABRICKS_HOST = "dbc-xxxxx.cloud.databricks.com"
-DATABRICKS_TOKEN = "dapi..."
-DATABRICKS_WAREHOUSE_ID = "..."
+-   **Thư mục seeds:** `webapp/migrations/seed_data/`
+-   **Dữ liệu Auth (`auth/`):**
+    -   **Users:** `admin`, `manager`, `user1`. (Mật khẩu mặc định: `password123`).
+    -   **Roles:** `Admin`, `Manager`, `Staff`.
+    -   **Permissions:** Cấu hình quyền truy cập dashboard, quản lý sản phẩm...
+-   **Dữ liệu Master (`master/`):**
+    -   **Products:** Danh mục sản phẩm mẫu.
+
+**Chạy migration thủ công qua CLI (cho dev, chạy script ngoài hoặc CI/CD):**
+```bash
+python migrations/migrate.py
 ```
 
-### 3. Start the app
-
+### 4. Chạy ứng dụng
+Sau khi mọi thứ đã sẵn sàng:
 ```bash
 streamlit run app.py
 ```
 
-The app will be available at `http://localhost:8501`
-
-## Deploy to Databricks Apps
-
-This app is pre-configured for Databricks Apps deployment with `app.yaml`.
-
-### Prerequisites
-
-1. Unity Catalog table `workspace.default.gold_drink_sales` must exist with schema:
-   - `product_name` (string)
-   - `total_revenue` (decimal)
-   - `total_sales` (bigint)
-
-2. SQL Warehouse must be available in workspace
-
-### Deploy using Databricks CLI
-
+## 🧪 Testing
 ```bash
-databricks apps deploy streamlit-git \
-  --source-code-path /Workspace/Users/your-email/streamlit-git
+pytest                 # Chạy Unit Tests
+pytest -m integration  # Chạy Integration Tests (yêu cầu kết nối Databricks)
 ```
-
-### Deploy using Databricks SDK (Python)
-
-```python
-from databricks.sdk import WorkspaceClient
-from databricks.sdk.service import apps
-
-w = WorkspaceClient()
-
-# Create app
-app_obj = apps.App(name="my-streamlit-app")
-w.apps.create(app=app_obj).result()
-
-# Deploy
-deployment = apps.AppDeployment(
-    source_code_path="/Workspace/Users/your-email/streamlit-git",
-    mode=apps.AppDeploymentMode.SNAPSHOT
-)
-w.apps.deploy(app_name="my-streamlit-app", app_deployment=deployment).result()
-```
-
-### Grant Permissions
-
-After deployment, grant permissions to the app's service principal:
-
-```sql
--- Grant SELECT on table
-GRANT SELECT ON TABLE workspace.default.gold_drink_sales 
-TO `<service-principal-uuid>`;
-
--- Grant CAN_USE on SQL Warehouse (via UI or API)
-```
-
-**Note:** The app will automatically authenticate using its service principal. No manual token configuration needed!
-
-## Run with Docker (Local)
-
-### 1. Prepare environment
-
-```bash
-cp .env.example .env
-# Edit .env with your credentials
-```
-
-### 2. Build and run
-
-```bash
-docker compose up --build
-```
-
-### 3. Access app
-
-Open `http://localhost:8501`
-
-**Docker run alternative:**
-
-```bash
-docker build -t streamlit-demo:local .
-docker run --rm -p 8501:8501 --env-file .env streamlit-demo:local
-```
-
-## Configuration Files
-
-- `app.yaml` - Databricks Apps configuration
-- `requirements.txt` - Python dependencies
-- `.env.example` - Template for local environment variables
-- `.streamlit/config.toml` - Streamlit production settings
-- `config/datasets.json` - Dataset and table configuration
-
-## Security Best Practices
-
-⚠️ **Never commit secrets to git:**
-- `.env` is in `.gitignore`
-- `.streamlit/secrets.toml` is in `.gitignore`
-- Only commit `.env.example` and `secrets.toml.example`
-
-✅ **For production deployments:**
-- Use Databricks Apps (automatic service principal auth)
-- Or use platform-specific secret management (e.g., Cloud Run secrets)
-
-## Project Structure
-
-```
-streamlit-git/
-├── app.py                          # Main entry point
-├── app.yaml                        # Databricks Apps config
-├── requirements.txt                # Dependencies
-├── .env.example                    # Local config template
-├── config/
-│   └── datasets.json               # Table configuration
-├── src/
-│   ├── __init__.py
-│   ├── application/                # Business logic
-│   ├── domain/                     # Models and validation
-│   ├── infrastructure/             # Data access (SQL Warehouse)
-│   └── ui/                         # Streamlit UI components
-└── tests/                          # Unit tests
-```
-
-## Troubleshooting
-
-### Local: "Missing Databricks configuration: DATABRICKS_TOKEN"
-- Check `.env` file exists and has correct values
-- Ensure `DATABRICKS_TOKEN` is set (not empty)
-- Verify token hasn't expired
-
-### Databricks Apps: "INSUFFICIENT_PERMISSIONS"
-- Grant SELECT permission on table to app service principal
-- Grant CAN_USE permission on SQL Warehouse
-- Find service principal UUID: Apps UI → Your App → Service Principal
-
-### SQL Warehouse not starting
-- Ensure warehouse is not stopped/deleted
-- Check you have CAN_USE permission on the warehouse
-- First query may take ~30s to start serverless warehouse
-
-## Development
-
-### Run tests
-
-```bash
-pytest
-```
-
-### Code structure
-
-The app follows clean architecture principles:
-- **Domain**: Core business models (DemoRequest, DemoReport)
-- **Application**: Business logic (generate_demo_report)
-- **Infrastructure**: External dependencies (SQL Warehouse access)
-- **UI**: Streamlit presentation layer
-
-## License
-
-[Your License Here]

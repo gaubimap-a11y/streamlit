@@ -1,0 +1,135 @@
+div[data-testid="stDataFrame"] [role="columnheader"],
+div[data-testid="stDataFrameResizable"] [role="columnheader"] {
+    background: var(--table-head-bg) !important;
+    color: var(--table-head-text) !important;
+    font-weight: 700 !important;
+    text-align: center !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+div[data-testid="stDataFrame"] [role="columnheader"] *,
+div[data-testid="stDataFrameResizable"] [role="columnheader"] * {
+    text-align: center !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+div[data-testid="stDataFrame"] [role="columnheader"] > div,
+div[data-testid="stDataFrameResizable"] [role="columnheader"] > div,
+div[data-testid="stDataFrame"] [role="columnheader"] > div > div,
+div[data-testid="stDataFrameResizable"] [role="columnheader"] > div > div {
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+div[data-testid="stDataFrame"] [role="gridcell"],
+div[data-testid="stDataFrame"] [role="columnheader"],
+div[data-testid="stDataFrameResizable"] [role="gridcell"],
+div[data-testid="stDataFrameResizable"] [role="columnheader"] {
+    padding-top: 0.18rem !important;
+    padding-bottom: 0.18rem !important;
+    font-size: 0.88rem !important;
+}
+
+div[data-testid="stDataFrame"] *,
+div[data-testid="stDataFrameResizable"] * {
+    scrollbar-width: thin;
+}
+
+.supply-report-table__wrap {
+    position: relative;
+    margin-top: 0.2rem;
+    border: 1px solid var(--border-1);
+    border-radius: 0;
+    overflow-x: auto;
+    overflow-y: auto;
+    max-height: 68vh;
+    box-shadow: var(--shadow-soft);
+    background: white;
+    scrollbar-gutter: stable;
+}
+
+.supply-report-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    min-width: max-content;
+    table-layout: auto;
+    margin-bottom: -1px;
+}
+
+.supply-report-table thead th,
+.supply-report-table tbody td {
+    border-right: 1px solid var(--border-1);
+    border-bottom: 1px solid var(--border-1);
+    padding: 0.7rem 0.65rem;
+    font-size: 0.88rem;
+    white-space: nowrap;
+}
+
+.supply-report-table thead th:first-child,
+.supply-report-table tbody td:first-child {
+    border-left: 1px solid var(--border-1);
+}
+
+.supply-report-table thead th {
+    background: var(--table-head-bg);
+    color: var(--table-head-text);
+    font-weight: 700;
+    text-align: center;
+    vertical-align: middle;
+    position: sticky;
+    z-index: 3;
+    border-top: 1px solid var(--border-1);
+    border-right: 1px solid var(--border-1);
+    border-bottom: 1px solid var(--border-1);
+    outline: 1px solid var(--border-1);
+    outline-offset: -1px;
+}
+
+.supply-report-table__group {
+    text-align: center;
+    top: 0;
+    z-index: 5;
+    border-bottom: 1px solid var(--border-1) !important;
+}
+
+.supply-report-table__subhead {
+    text-align: left;
+    top: 2.55rem;
+    z-index: 6;
+    border-bottom: 1px solid var(--border-1) !important;
+}
+
+.supply-report-table thead tr:only-child .supply-report-table__subhead {
+    top: 0;
+    z-index: 5;
+    text-align: center;
+}
+
+.supply-report-table tbody td {
+    color: var(--text-1);
+    background: white;
+}
+
+.supply-report-table tbody tr.supply-report-table__total td {
+    background: #eef2f7;
+    font-weight: 700;
+}
+
+.supply-report-table thead tr:first-child th:first-child,
+.supply-report-table thead tr:first-child th:last-child,
+.supply-report-table tbody tr:last-child td:first-child,
+.supply-report-table tbody tr:last-child td:last-child {
+    border-radius: 0;
+}

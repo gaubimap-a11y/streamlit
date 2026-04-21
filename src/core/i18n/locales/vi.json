@@ -1,0 +1,111 @@
+{
+  "ui": {
+    "header": {
+      "system_name": "Hệ thống phân tích dữ liệu",
+      "brand": "COOP KOBE",
+      "logout": "Đăng xuất"
+    },
+    "sidebar": {
+      "dashboard": "Báo cáo",
+      "back_to_dashboard": "Quay lại Báo cáo",
+      "dark_mode": "Chế độ tối",
+      "language": "Ngôn ngữ",
+      "admin_panel": "Quản trị hệ thống",
+      "users": "Người dùng",
+      "summary_report": "Báo cáo tổng hợp",
+      "supply_report": "Báo cáo cung ứng",
+      "menu_admin": "Quản lý menu",
+      "connection_config": "Cấu hình kết nối",
+      "info_card": "Nhập các tiêu chí để truy xuất dữ liệu từ Databricks SQL Warehouse.",
+      "department_label": "Chọn Bộ phận (部門)",
+      "date_range_label": "Kỳ lấy dữ liệu (期間)",
+      "state_connected": "Trạng thái: Đã kết nối",
+      "engine_label": "Engine: Databricks SQL"
+    },
+    "dashboard": {
+      "search_title": "Tìm kiếm sản phẩm",
+      "search_results": "Kết quả tìm kiếm",
+      "chart_title": "Biểu đồ tồn kho theo loại",
+      "empty_data": "Không tìm thấy sản phẩm nào phù hợp.",
+      "export_btn": "Xuất dữ liệu",
+      "filters": {
+          "product_name": "Tên sản phẩm (Sản phẩm *)",
+          "category": "Loại sản phẩm (Loại)",
+          "price_min": "Giá tối thiểu",
+          "price_max": "Giá tối đa"
+      },
+      "metrics": {
+          "db_connected": "Cơ sở dữ liệu",
+          "avg_latency": "Độ trễ TB",
+          "data_freshness": "Độ tươi dữ liệu",
+          "active": "Hoạt động",
+          "realtime": "Thời gian thực"
+      },
+      "table": {
+          "product_name": "Tên sản phẩm",
+          "category": "Loại",
+          "price": "Giá",
+          "unit": "Đơn vị",
+          "description": "Mô tả",
+          "stock_quantity": "Tồn kho"
+      }
+    },
+    "admin": {
+      "title": "Quản trị bảo mật",
+      "banner_title": "Security workbench",
+      "banner_subtitle": "Quản lý Users, Roles, Permissions",
+      "banner_body": "Chọn một mục trong danh sách bên trái, xem chi tiết ở bên phải, rồi lưu sau khi kiểm tra đủ.",
+      "tabs": {
+        "users": "Người dùng",
+        "roles": "Vai trò",
+        "permissions": "Quyền hạn",
+        "audit": "Nhật ký"
+      },
+      "users": {
+        "search_label": "Tìm kiếm người dùng",
+        "status_label": "Trạng thái",
+        "auth_source": "Nguồn xác thực",
+        "save_success": "Đã lưu người dùng thành công."
+      },
+      "roles": {
+        "search_label": "Tìm kiếm vai trò",
+        "save_success": "Đã lưu vai trò thành công."
+      },
+      "common": {
+          "active": "Hoạt động",
+          "inactive": "Ngừng hoạt động",
+          "all": "Tất cả",
+          "save_btn": "Lưu thay đổi",
+          "any": "Tất cả",
+          "prev_page": "<- Trang trước",
+          "next_page": "Trang sau ->",
+          "page_info": "Trang {current} / {total}"
+      }
+    }
+  },
+  "auth": {
+    "title": "Đăng nhập hệ thống",
+    "subtitle": "Đăng nhập để vào hệ thống quản lý.",
+    "username": "Tên đăng nhập",
+    "password": "Mật khẩu",
+    "remember_me": "Ghi nhớ đăng nhập",
+    "login_btn": "Đăng nhập",
+    "loading": "Đang xác thực...",
+    "google_btn": "Tiếp tục với Google",
+    "footer": "Quên mật khẩu? Liên hệ quản trị viên để được hỗ trợ.",
+    "messages": {
+        "empty": "Vui lòng nhập đầy đủ thông tin.",
+        "wrong": "Thông tin đăng nhập không đúng.",
+        "inactive": "Tài khoản đã bị khóa.",
+        "lockout": "Tài khoản bị khoá do sai quá nhiều.",
+        "success": "Đăng nhập thành công."
+    }
+  },
+  "messages": {
+    "access_denied": "Tài khoản không có quyền truy cập.",
+    "fetch_error": "Lỗi lấy dữ liệu. Vui lòng thử lại sau.",
+    "export_denied": "Bạn không có quyền xuất dữ liệu.",
+    "filter_warning": "Giá tối thiểu không khớp.",
+    "chart_library_error": "Không thể tải thư viện biểu đồ. Vui lòng kiểm tra cài đặt."
+  }
+}

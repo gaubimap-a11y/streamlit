@@ -1,0 +1,11 @@
+[class^="st-key-summary_axis_tree_component_"],
+[class*=" st-key-summary_axis_tree_component_"],
+.st-key-summary_tree_component {
+    border: 1px solid #d6d6d9;
+    border-radius: 10px;
+    height: 280px;
+    overflow: auto;
+    padding: 8px;
+}
+
+

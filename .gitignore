@@ -1,5 +1,23 @@
-.env
-.streamlit/secrets.toml
+# =========================
+# Databricks config (secret)
+# =========================
+webapp/databricks.local.cfg
+
+# =========================
+# Python cache
+# =========================
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+
+# Pytest / tooling cache
 .pytest_cache/
+.ruff_cache/
+
+# =========================
+# Virtual environments
+# =========================
+.venv/
+venv/
+env/
+ENV/

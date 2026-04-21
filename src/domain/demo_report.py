@@ -4,7 +4,7 @@ from dataclasses import asdict
 
 import pandas as pd
 
-from domain.models import DemoSummary
+from src.domain.models import DemoSummary
 
 
 def summarize_demo_report(report_df: pd.DataFrame, source: str) -> DemoSummary:

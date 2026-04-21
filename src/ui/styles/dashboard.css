@@ -1,0 +1,73 @@
+﻿.dashboard-hero {
+    margin: 0.25rem 0 1.25rem;
+    padding: 1.1rem 1.25rem;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #f2f8ff 0%, #eefaf3 55%, #fff7ec 100%);
+    border: 1px solid rgba(45, 115, 185, 0.16);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.dashboard-hero-eyebrow {
+    font-size: 0.76rem;
+    letter-spacing: 0.11em;
+    color: #2d73b9;
+    font-weight: 700;
+}
+
+.dashboard-hero h1 {
+    margin: 0.2rem 0 0.45rem;
+    font-size: 1.6rem;
+    color: #1e2b39;
+}
+
+.dashboard-hero p {
+    margin: 0;
+    color: #4d6074;
+    max-width: 760px;
+}
+
+.dashboard-hero-pill {
+    padding: 0.44rem 0.8rem;
+    border-radius: 999px;
+    background: #ffffff;
+    border: 1px solid rgba(30, 43, 57, 0.12);
+    color: #274257;
+    font-weight: 600;
+    font-size: 0.8rem;
+    white-space: nowrap;
+}
+
+.kpi-card {
+    border: 1px solid rgba(28, 56, 83, 0.12);
+    border-radius: 14px;
+    padding: 0.85rem 0.95rem;
+    background: #ffffff;
+    min-height: 88px;
+}
+
+.kpi-label {
+    font-size: 0.8rem;
+    color: #4d6074;
+    margin-bottom: 0.25rem;
+}
+
+.kpi-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1a2735;
+}
+
+.panel-title {
+    margin: 1rem 0 0.35rem;
+    font-weight: 700;
+    color: #24384d;
+}
+
+@media (max-width: 920px) {
+    .dashboard-hero {
+        flex-direction: column;
+    }
+}

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from domain.models import DemoRequest
+from src.domain.models import DemoRequest
 
 
 class ValidationError(ValueError):
