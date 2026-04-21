@@ -88,8 +88,8 @@ def sync_auth_to_browser_storage(*, remember_me: bool) -> None:
           }}
           try {{
             const encoded = encodeURIComponent(payload);
-            const maxAge = {str(bool(remember_me)).lower()} ? `; Max-Age=${{cookieMaxAge}}` : "";
-            document.cookie = `${{storageKey}}=${{encoded}}; Path=/; SameSite=Lax${{maxAge}}`;
+            const maxAge = {str(bool(remember_me)).lower()} ? "; Max-Age=" + cookieMaxAge : "";
+            document.cookie = storageKey + "=" + encoded + "; Path=/; SameSite=Lax" + maxAge;
           }} catch (e) {{}}
           try {{
             window.parent?.postMessage({{ type: "tmn_auth_storage_synced" }}, "*");
@@ -116,7 +116,7 @@ def clear_browser_storage_auth(*, force_reload: bool = False) -> None:
           try {{ sessionStorage.removeItem(storageKey); }} catch (e) {{}}
           try {{ localStorage.removeItem(storageKey); }} catch (e) {{}}
           try {{ sessionStorage.removeItem(attemptKey); }} catch (e) {{}}
-          try {{ document.cookie = `${{storageKey}}=; Path=/; Max-Age=0; SameSite=Lax`; }} catch (e) {{}}
+          try {{ document.cookie = storageKey + "=; Path=/; Max-Age=0; SameSite=Lax"; }} catch (e) {{}}
           if ({str(bool(force_reload)).lower()}) {{
             try {{
               const target = window.parent && window.parent.location ? window.parent : window;
