@@ -111,8 +111,8 @@ def clear_browser_storage_auth(*, force_reload: bool = False) -> None:
         f"""
         <script>
         (function() {{
-          const storageKey = { _BROWSER_STORAGE_KEY!r };
-          const attemptKey = { _BROWSER_RESTORE_ATTEMPT_KEY!r };
+          const storageKey = {_BROWSER_STORAGE_KEY!r};
+          const attemptKey = {_BROWSER_RESTORE_ATTEMPT_KEY!r};
           try {{ sessionStorage.removeItem(storageKey); }} catch (e) {{}}
           try {{ localStorage.removeItem(storageKey); }} catch (e) {{}}
           try {{ sessionStorage.removeItem(attemptKey); }} catch (e) {{}}
