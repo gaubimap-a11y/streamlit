@@ -2,10 +2,8 @@ from __future__ import annotations
 
 import html
 from pathlib import Path
-from urllib.parse import urlencode
 
 import streamlit as st
-import streamlit.components.v1 as components
 
 from src.application.menu.menu_service import resolve_visible_menu_tree
 from src.ui.session.auth_session import KEY_PERMISSIONS, KEY_ROLES, switch_page_safely
@@ -103,14 +101,15 @@ def _consume_menu_nav_context_query_param() -> str | None:
 
 
 def _build_menu_nav_href(route: str, *, nav_context: str | None = None) -> str:
+    _ = nav_context
     normalized_route = str(route or "").strip().lower()
     if not normalized_route:
         return "#"
-    params: list[tuple[str, str]] = [(_NAV_QUERY_PARAM, normalized_route)]
-    normalized_context = str(nav_context or "").strip().lower()
-    if normalized_context:
-        params.append((_NAV_CONTEXT_PARAM, normalized_context))
-    return f"?{urlencode(params)}"
+    if not normalized_route.startswith("/"):
+        normalized_route = f"/{normalized_route}"
+    # Streamlit multipage canonical route format, stable on streamlit.app:
+    #   /~/+/dashboard
+    return f"/~/+{normalized_route}"
 
 
 def _handle_pending_menu_navigation(
@@ -285,6 +284,68 @@ def _find_menu_by_route(menu_tree: list[dict[str, object]], *, route: str) -> di
 
 def _tree_contains_route(menu_tree: list[dict[str, object]], *, route: str) -> bool:
     return _find_menu_by_route(menu_tree, route=route) is not None
+
+
+def _render_native_route_action(
+    *,
+    title: str,
+    route: str,
+    current_route: str,
+    key: str,
+) -> None:
+    normalized_route = str(route or "").strip().lower()
+    page_path = _route_to_page_path(normalized_route)
+    if not normalized_route or not page_path:
+        return
+
+    if st.button(
+        title,
+        key=key,
+        use_container_width=True,
+        disabled=normalized_route == current_route.strip().lower(),
+    ):
+        switch_page_safely(page_path)
+        st.stop()
+
+
+def _render_native_menu_tree(
+    items: list[dict[str, object]],
+    *,
+    current_route: str,
+    key_prefix: str,
+) -> None:
+    for index, row in enumerate(items):
+        title = str(row.get("title") or "").strip() or "Menu"
+        route = str(row.get("route") or "").strip()
+        children = list(row.get("children") or [])
+        menu_key = str(row.get("menu_key") or "").strip() or "node"
+        key_base = f"{key_prefix}_{index}_{menu_key}"
+
+        if children:
+            with st.expander(title, expanded=_is_route_active_in_branch(row, current_route)):
+                if route:
+                    _render_native_route_action(
+                        title=f"Đi tới {title}",
+                        route=route,
+                        current_route=current_route,
+                        key=f"{key_base}_self",
+                    )
+                _render_native_menu_tree(
+                    children,
+                    current_route=current_route,
+                    key_prefix=f"{key_base}_child",
+                )
+            continue
+
+        if route:
+            _render_native_route_action(
+                title=title,
+                route=route,
+                current_route=current_route,
+                key=f"{key_base}_route",
+            )
+        else:
+            st.caption(title)
 
 
 def _render_navbar_css() -> None:
@@ -635,12 +696,12 @@ def render_top_navbar(
             should_hide_menu = bool(hide_value)
 
     if report_menu_tree and not should_hide_menu:
-        report_menu_html = _build_menu_ul_li_html(
-            report_menu_tree,
-            current_route=current_route,
-            nav_context=context_key or None,
-        )
-        st.markdown(f'<nav class="navbar-shell">{report_menu_html}</nav>', unsafe_allow_html=True)
+        with st.container(border=True):
+            _render_native_menu_tree(
+                report_menu_tree,
+                current_route=current_route,
+                key_prefix="top_nav",
+            )
 
 
 def render_left_sidebar_menu(*, current_route: str, title: str = "Menu") -> None:
@@ -652,71 +713,13 @@ def render_left_sidebar_menu(*, current_route: str, title: str = "Menu") -> None
         return
     _handle_pending_menu_navigation(visible_menu_tree=visible_menu_tree, current_route=current_route)
     _sync_browser_path_with_route(current_route)
-    _render_navbar_css()
     _, sidebar_menu_tree = _split_menu_tree_by_scope(visible_menu_tree)
     if not sidebar_menu_tree:
         return
 
-    sidebar_menu_html = _build_menu_ul_li_html(sidebar_menu_tree, current_route=current_route)
-    title_html = html.escape(title)
-    st.markdown(
-        (
-            '<div class="sidebar-menu-in-left">'
-            '<div class="sidebar-menu-in-left-header">'
-            f'<div class="sidebar-menu-in-left-title">{title_html}</div>'
-            '<button id="left-sidebar-menu-toggle-btn" class="sidebar-menu-toggle-btn" type="button" title="Thu gọn/Mở menu">▲</button>'
-            '</div>'
-            f'<div id="left-sidebar-menu-content" class="sidebar-menu-content">{sidebar_menu_html}</div>'
-            '</div>'
-        ),
-        unsafe_allow_html=True,
+    st.markdown(f"**{html.escape(title)}**")
+    _render_native_menu_tree(
+        sidebar_menu_tree,
+        current_route=current_route,
+        key_prefix="side_nav",
     )
-    components.html(
-        """
-        <script>
-        (function () {
-          const doc = window.parent && window.parent.document ? window.parent.document : document;
-          const btn = doc.getElementById("left-sidebar-menu-toggle-btn");
-          const content = doc.getElementById("left-sidebar-menu-content");
-          if (!btn || !content) return;
-          const storageKey = "left_sidebar_menu_collapsed";
-          const apply = (collapsed) => {
-            content.classList.toggle("is-collapsed", collapsed);
-            btn.textContent = collapsed ? "▼" : "▲";
-            btn.title = collapsed ? "Mở menu" : "Thu gọn menu";
-          };
-          let collapsed = false;
-          try { collapsed = sessionStorage.getItem(storageKey) === "1"; } catch (e) {}
-          apply(collapsed);
-
-          const parentItems = content.querySelectorAll(".navbar-menu-li.has-children");
-          parentItems.forEach((li) => {
-            const trigger = li.querySelector(".navbar-menu-link");
-            if (!trigger) return;
-            if (li.classList.contains("active")) {
-              li.classList.add("is-open");
-            }
-            if (trigger.dataset.sidebarBound === "1") return;
-            trigger.dataset.sidebarBound = "1";
-            trigger.addEventListener("click", function (event) {
-              event.preventDefault();
-              event.stopPropagation();
-              li.classList.toggle("is-open");
-            });
-          });
-
-          btn.onclick = function () {
-            collapsed = !content.classList.contains("is-collapsed");
-            apply(collapsed);
-            try { sessionStorage.setItem(storageKey, collapsed ? "1" : "0"); } catch (e) {}
-            return false;
-          };
-        })();
-        </script>
-        """,
-        height=0,
-        width=0,
-    )
-
-
-
