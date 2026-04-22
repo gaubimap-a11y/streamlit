@@ -2,6 +2,7 @@
 # Databricks config (secret)
 # =========================
 databricks.local.cfg
+.streamlit/secrets.toml
 
 # =========================
 # Python cache

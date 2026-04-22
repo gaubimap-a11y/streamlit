@@ -74,3 +74,9 @@ streamlit run app.py
 pytest                 # Chạy Unit Tests
 pytest -m integration  # Chạy Integration Tests (yêu cầu kết nối Databricks)
 ```
+
+## Streamlit Cloud deployment (TOML secrets)
+1. Tao file `.streamlit/secrets.toml` tu `.streamlit/secrets.toml.example`.
+2. Dien gia tri that cho `[databricks]` (`server_hostname`, `http_path`, `access_token`).
+3. Khi deploy len `streamlit.app`, copy noi dung TOML vao `App settings > Secrets`.
+4. Thu tu uu tien doc config: `ENV -> Streamlit secrets (TOML) -> databricks.local.cfg/databricks.cfg`.

@@ -11,6 +11,7 @@ from urllib import request as urllib_request
 
 import pandas as pd
 
+from src.core.streamlit_secrets import get_secret_section, load_streamlit_secrets
 
 _WEBAPP_ROOT = Path(__file__).resolve().parents[3]
 _DEFAULT_LOCAL_CFG = _WEBAPP_ROOT / "databricks.local.cfg"
@@ -63,6 +64,17 @@ def _load_databricks_cfg() -> tuple[configparser.ConfigParser, Path]:
     if _DEFAULT_LOCAL_CFG.exists():
         return _read_cfg_file(_DEFAULT_LOCAL_CFG), _DEFAULT_LOCAL_CFG
     return _read_cfg_file(_DEFAULT_TEMPLATE_CFG), _DEFAULT_TEMPLATE_CFG
+
+
+def _as_clean_str(value: Any) -> str:
+    if value is None:
+        return ""
+    return str(value).strip().strip('"').strip("'")
+
+
+def _read_secret_value(secrets: dict[str, Any], key: str) -> str:
+    section = get_secret_section(secrets, _DATABRICKS_SECTION)
+    return _as_clean_str(section.get(key))
 
 
 def _extract_warehouse_id(http_path: str) -> str:
@@ -139,11 +151,20 @@ def _build_statement_from_dataset_config(dataset: dict[str, Any], has_product_na
 
 
 def load_databricks_config() -> DatabricksConfig:
+    secrets = load_streamlit_secrets()
     config, config_path = _load_databricks_cfg()
 
-    host = _read_cfg_value(config, "server_hostname")
-    http_path = _read_cfg_value(config, "http_path")
-    token = _read_cfg_value(config, "access_token")
+    host = (
+        _read_secret_value(secrets, "server_hostname")
+        or _read_secret_value(secrets, "host")
+        or _read_cfg_value(config, "server_hostname")
+    )
+    http_path = _read_secret_value(secrets, "http_path") or _read_cfg_value(config, "http_path")
+    token = (
+        _read_secret_value(secrets, "access_token")
+        or _read_secret_value(secrets, "token")
+        or _read_cfg_value(config, "access_token")
+    )
 
     missing = [key for key, value in {
         "server_hostname": host,
@@ -153,22 +174,34 @@ def load_databricks_config() -> DatabricksConfig:
     if missing:
         joined = ", ".join(missing)
         raise DatabricksUnavailableError(
-            f"Missing Databricks configuration: {joined}. Checked '{config_path.name}'."
+            f"Missing Databricks configuration: {joined}. Checked Streamlit secrets and '{config_path.name}'."
         )
 
     try:
-        poll_seconds = int(_read_cfg_value(config, "poll_seconds") or DEFAULT_SQL_POLL_SECONDS)
+        poll_seconds = int(
+            _read_secret_value(secrets, "poll_seconds")
+            or _read_cfg_value(config, "poll_seconds")
+            or DEFAULT_SQL_POLL_SECONDS
+        )
     except ValueError:
         poll_seconds = DEFAULT_SQL_POLL_SECONDS
 
     try:
-        timeout_seconds = int(_read_cfg_value(config, "timeout_seconds") or DEFAULT_SQL_TIMEOUT_SECONDS)
+        timeout_seconds = int(
+            _read_secret_value(secrets, "timeout_seconds")
+            or _read_cfg_value(config, "timeout_seconds")
+            or DEFAULT_SQL_TIMEOUT_SECONDS
+        )
     except ValueError:
         timeout_seconds = DEFAULT_SQL_TIMEOUT_SECONDS
 
-    warehouse_id = _read_cfg_value(config, "warehouse_id") or _extract_warehouse_id(http_path)
-    source_label = _read_cfg_value(config, "source_label") or "sql_warehouse"
-    wait_timeout = _read_cfg_value(config, "wait_timeout") or DEFAULT_SQL_WAIT_TIMEOUT
+    warehouse_id = _read_secret_value(secrets, "warehouse_id") or _read_cfg_value(
+        config, "warehouse_id"
+    ) or _extract_warehouse_id(http_path)
+    source_label = _read_secret_value(secrets, "source_label") or _read_cfg_value(config, "source_label") or "sql_warehouse"
+    wait_timeout = _read_secret_value(secrets, "wait_timeout") or _read_cfg_value(
+        config, "wait_timeout"
+    ) or DEFAULT_SQL_WAIT_TIMEOUT
 
     return DatabricksConfig(
         host=host,
