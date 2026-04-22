@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import html
 from pathlib import Path
+from urllib.parse import urlencode
 
 import streamlit as st
 import streamlit.components.v1 as components
@@ -102,11 +103,14 @@ def _consume_menu_nav_context_query_param() -> str | None:
 
 
 def _build_menu_nav_href(route: str, *, nav_context: str | None = None) -> str:
-    _ = nav_context
     normalized_route = str(route or "").strip().lower()
     if not normalized_route:
         return "#"
-    return normalized_route
+    params: list[tuple[str, str]] = [(_NAV_QUERY_PARAM, normalized_route)]
+    normalized_context = str(nav_context or "").strip().lower()
+    if normalized_context:
+        params.append((_NAV_CONTEXT_PARAM, normalized_context))
+    return f"?{urlencode(params)}"
 
 
 def _handle_pending_menu_navigation(

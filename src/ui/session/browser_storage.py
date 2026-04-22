@@ -77,22 +77,24 @@ def sync_auth_to_browser_storage(*, remember_me: bool) -> None:
           const attemptKey = { _BROWSER_RESTORE_ATTEMPT_KEY!r };
           const cookieMaxAge = {30 * 24 * 60 * 60};
           const payload = {encrypted_payload!r};
+          const rootWindow = (window.parent && window.parent !== window) ? window.parent : window;
+          const rootDocument = rootWindow.document || document;
           try {{
-            sessionStorage.setItem(storageKey, payload);
-            sessionStorage.removeItem(attemptKey);
+            rootWindow.sessionStorage.setItem(storageKey, payload);
+            rootWindow.sessionStorage.removeItem(attemptKey);
           }} catch (e) {{}}
           if ({str(bool(remember_me)).lower()}) {{
-            try {{ localStorage.setItem(storageKey, payload); }} catch (e) {{}}
+            try {{ rootWindow.localStorage.setItem(storageKey, payload); }} catch (e) {{}}
           }} else {{
-            try {{ localStorage.removeItem(storageKey); }} catch (e) {{}}
+            try {{ rootWindow.localStorage.removeItem(storageKey); }} catch (e) {{}}
           }}
           try {{
             const encoded = encodeURIComponent(payload);
             const maxAge = {str(bool(remember_me)).lower()} ? "; Max-Age=" + cookieMaxAge : "";
-            document.cookie = storageKey + "=" + encoded + "; Path=/; SameSite=Lax" + maxAge;
+            rootDocument.cookie = storageKey + "=" + encoded + "; Path=/; SameSite=Lax" + maxAge;
           }} catch (e) {{}}
           try {{
-            window.parent?.postMessage({{ type: "tmn_auth_storage_synced" }}, "*");
+            rootWindow.postMessage({{ type: "tmn_auth_storage_synced" }}, "*");
             window.postMessage({{ type: "tmn_auth_storage_synced" }}, "*");
           }} catch (e) {{}}
         }})();
@@ -113,10 +115,12 @@ def clear_browser_storage_auth(*, force_reload: bool = False) -> None:
         (function() {{
           const storageKey = {_BROWSER_STORAGE_KEY!r};
           const attemptKey = {_BROWSER_RESTORE_ATTEMPT_KEY!r};
-          try {{ sessionStorage.removeItem(storageKey); }} catch (e) {{}}
-          try {{ localStorage.removeItem(storageKey); }} catch (e) {{}}
-          try {{ sessionStorage.removeItem(attemptKey); }} catch (e) {{}}
-          try {{ document.cookie = storageKey + "=; Path=/; Max-Age=0; SameSite=Lax"; }} catch (e) {{}}
+          const rootWindow = (window.parent && window.parent !== window) ? window.parent : window;
+          const rootDocument = rootWindow.document || document;
+          try {{ rootWindow.sessionStorage.removeItem(storageKey); }} catch (e) {{}}
+          try {{ rootWindow.localStorage.removeItem(storageKey); }} catch (e) {{}}
+          try {{ rootWindow.sessionStorage.removeItem(attemptKey); }} catch (e) {{}}
+          try {{ rootDocument.cookie = storageKey + "=; Path=/; Max-Age=0; SameSite=Lax"; }} catch (e) {{}}
           if ({str(bool(force_reload)).lower()}) {{
             try {{
               const target = window.parent && window.parent.location ? window.parent : window;

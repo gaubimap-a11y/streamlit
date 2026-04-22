@@ -9,10 +9,12 @@ import streamlit as st
 from src.ui.components.header import render_dashboard_header
 from src.ui.components.sidebar import render_app_sidebar
 from src.ui.session.auth_session import (
+    KEY_REMEMBER_ME,
     get_current_display_name,
     get_current_username,
     require_auth,
 )
+from src.ui.session.browser_storage import sync_auth_to_browser_storage
 from src.ui.styles.loader import inject_css
 from src.ui.styles.loader import sync_theme_mode
 
@@ -95,6 +97,8 @@ class BasePage(ABC):
 
     def _render_page_header(self, *, show_welcome: bool = True) -> None:
         self._render_page_sidebar()
+        remember_me = bool(st.session_state.get(KEY_REMEMBER_ME, False))
+        sync_auth_to_browser_storage(remember_me=remember_me)
         self._render_header_left()
         sync_theme_mode(self._get_dark_mode())
 
