@@ -566,7 +566,8 @@ class SecurityAdminPage(BasePage):
                 # Surgical invalidate
                 self._invalidate_admin_cache(bucket="user_detail", key=(principal_id.strip().lower(),))
                 self._invalidate_admin_cache(bucket="permissions")
-                st.toast("Đã cập nhật user thành công.", icon="✅")
+                self._set_feedback("Đã cập nhật user thành công.", level="success")
+                st.session_state[_ADMIN_USER_MODAL_PENDING_CLOSE_KEY] = True
                 st.rerun(scope="fragment")
             except (AuthenticationValidationError, AuthError) as exc:
                 st.error(str(exc))
@@ -633,7 +634,7 @@ class SecurityAdminPage(BasePage):
         )
         def _dialog():
             if bool(st.session_state.pop(_ADMIN_ROLE_ADD_MODAL_PENDING_CLOSE_KEY, False)):
-                _close_current_dialog_without_rerun()
+                self._close_role_modal_with_roles_refresh()
                 return
 
             if not self._can_manage_roles(session):
@@ -688,7 +689,8 @@ class SecurityAdminPage(BasePage):
                     self._admin_service.assign_permissions(session, role_id=created_role_id, permission_ids=permission_ids)
                 self._invalidate_admin_cache()
                 self._set_feedback("Đã tạo role thành công.", level="success")
-                st.rerun()
+                st.session_state[_ADMIN_ROLE_ADD_MODAL_PENDING_CLOSE_KEY] = True
+                st.rerun(scope="fragment")
             except (AuthenticationValidationError, AuthError) as exc:
                 st.error(str(exc))
 
@@ -780,7 +782,8 @@ class SecurityAdminPage(BasePage):
                 self._invalidate_admin_cache(bucket="role_detail", key=(role_id.strip().lower(),))
                 self._invalidate_admin_cache(bucket="roles")
                 self._invalidate_admin_cache(bucket="permissions")
-                st.toast("Đã cập nhật role thành công.", icon="✅")
+                self._set_feedback("Đã cập nhật role thành công.", level="success")
+                st.session_state[_ADMIN_ROLE_EDIT_MODAL_PENDING_CLOSE_KEY] = True
                 st.rerun(scope="fragment")
             except (AuthenticationValidationError, AuthError) as exc:
                 st.error(str(exc))
@@ -846,7 +849,7 @@ class SecurityAdminPage(BasePage):
         )
         def _dialog():
             if bool(st.session_state.pop(_ADMIN_PERMISSION_ADD_MODAL_PENDING_CLOSE_KEY, False)):
-                _close_current_dialog_without_rerun()
+                self._close_permission_modal_with_permissions_refresh()
                 return
 
             if not self._can_manage_permissions(session):
@@ -885,7 +888,8 @@ class SecurityAdminPage(BasePage):
                 )
                 self._invalidate_admin_cache()
                 self._set_feedback("Đã tạo permission thành công.", level="success")
-                st.rerun()
+                st.session_state[_ADMIN_PERMISSION_ADD_MODAL_PENDING_CLOSE_KEY] = True
+                st.rerun(scope="fragment")
             except (AuthenticationValidationError, AuthError) as exc:
                 st.error(str(exc))
 
@@ -958,7 +962,8 @@ class SecurityAdminPage(BasePage):
                 # Surgical invalidate
                 self._invalidate_admin_cache(bucket="permission_detail", key=(permission_id.strip().lower(),))
                 self._invalidate_admin_cache(bucket="permissions")
-                st.toast("Đã cập nhật permission thành công.", icon="✅")
+                self._set_feedback("Đã cập nhật permission thành công.", level="success")
+                st.session_state[_ADMIN_PERMISSION_EDIT_MODAL_PENDING_CLOSE_KEY] = True
                 st.rerun(scope="fragment")
             except (AuthenticationValidationError, AuthError) as exc:
                 st.error(str(exc))
